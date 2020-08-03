@@ -98,6 +98,15 @@
 #define MOUSE_UP       1
 #define MOUSE_CLICK    2
 
+var script = document.createElement("script");
+script.src = 'https://code.jquery.com/jquery-3.5.1.min.js';
+document.head.appendChild(script);
+
+var meta = document.createElement("meta");
+meta.name = 'viewport';
+meta.content = 'user-scalable=no;user-scalable=0;';
+document.head.appendChild(meta);
+
 function VT100(container) {
   if (typeof linkifyURLs == 'undefined' || linkifyURLs <= 0) {
     this.urlRE            = null;
@@ -1066,6 +1075,10 @@ VT100.prototype.initializeElements = function(container) {
                    function(vt100) {
                      return function(e) {
                        if (!e) e = window.event;
+                       if (e.keyCode == 229) {
+                         document.getElementById('input').blur();
+                         document.getElementById('input').focus();
+                       }
                        return vt100.keyUp(e); } }(this));
 
   // Attach listeners that move the focus to the <input> field. This way we
