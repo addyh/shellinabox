@@ -1642,8 +1642,8 @@ static void childProcess(struct Service *service, int width, int height,
   }
 
   // Change user and group ids
-  check(!setresgid(service->gid, service->gid, service->gid));
-  check(!setresuid(service->uid, service->uid, service->uid));
+  //check(!setresgid(service->gid, service->gid, service->gid));
+  //check(!setresuid(service->uid, service->uid, service->uid));
 
   // Change working directory
   if (service->useHomeDir) {
@@ -1682,10 +1682,8 @@ static void childProcess(struct Service *service, int width, int height,
     snprintf(remoteHost, 256,
              (*realIP) ? "%s, %s" : "%s%s", peerName,
              (*realIP) ? realIP : "");
-    execle("/bin/login", "login", "-p", "-h", remoteHost,
-           (void *)0, environment);
-    execle("/usr/bin/login", "login", "-p", "-h", remoteHost,
-           (void *)0, environment);
+    execle("/bin/bash", "bash", (void *)0, environment);
+    execle("/bin/bash", "bash", (void *)0, environment);
   } else {
     // Launch user provied service
     execService(width, height, service, peerName, realIP, environment, url);
