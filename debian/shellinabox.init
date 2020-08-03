@@ -44,37 +44,36 @@ SHELLINABOX_GROUP="${SHELLINABOX_GROUP:-shellinabox}"
 #       Function that starts the daemon/service.
 #
 d_start() {
-  if [ -z "$SHELLINABOX_DAEMON_START" -o                                      \
-          "$SHELLINABOX_DAEMON_START" = "0" ]; then
+  if [ -z "$SHELLINABOX_DAEMON_START" -o "$SHELLINABOX_DAEMON_START" = "0" ]; then
     return 0
   fi
 
-  eval start-stop-daemon --start --oknodo --pidfile "'$PIDFILE'"              \
-                    --exec "'$DAEMON'" -- -q --background="'$PIDFILE'"        \
-                    -c "'${SHELLINABOX_DATADIR}'" -p "'${SHELLINABOX_PORT}'"  \
-                    -u "'${SHELLINABOX_USER}'" -g "'${SHELLINABOX_GROUP}'"    \
-                    $(for i in $(ls /etc/shellinabox/options-enabled/*.css |
-                                 sed -e                                       \
-                                    's/.*[/]\([0-9]*\)[-_+][^/:,;]*[.]css/\1/'|
-                                 sort -u); do
-                        for j in /etc/shellinabox/options-enabled/"$i"*.css; do
-                          echo -n "$j" |
-                          sed -e 's/\(.*[/]\)\([0-9]*\)\([-_+]\)\([^/:,;]*\)[.]css/\4:\3\1\2\3\4.css,/
-                                  s/:_/:-/'
-                        done |
-                        sed -e 's/,$/;/'
-                      done |
-                      sed -e 's/;$//
-                              //b
-                              s/.*/--user-css "\0"/')                         \
-                    "${SHELLINABOX_ARGS}"
+	MYCSS="$(for i in $(ls /etc/shellinabox/options-enabled/*.css |
+                        sed -e 's/.*[/]\([0-9]*\)[-_+][^/:,;]*[.]css/\1/'|
+                        sort -u); do
+               for j in /etc/shellinabox/options-enabled/"$i"*.css; do
+                 echo -n "$j" |
+                 sed -e 's/\(.*[/]\)\([0-9]*\)\([-_+]\)\([^/:,;]*\)[.]css/\4:\3\1\2\3\4.css,/
+                         s/:_/:-/'
+               done |
+               sed -e 's/,$/;/'
+             done |
+             sed -e 's/;$//
+                     //b
+                     s/.*/ \0/')"
+	THECSS="$MYCSS"
+
+    runuser -l pi -c "$DAEMON -q --background=$PIDFILE        \
+    -c $SHELLINABOX_DATADIR -p $SHELLINABOX_PORT              \
+    --user-css '$THECSS'                                      \
+    $SHELLINABOX_ARGS"
 }
 
 #
 #       Function that stops the daemon/service.
 #
 d_stop() {
-  start-stop-daemon --stop --oknodo --pidfile "$PIDFILE"
+  sudo  killall "$DAEMON"
   rm -f "$PIDFILE"
 }
 
