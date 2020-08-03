@@ -94,20 +94,20 @@ void initService(struct Service *service, const char *arg) {
   // The next part of the argument is either the word 'LOGIN' or the
   // application definition.
   if (!strcmp(arg, "LOGIN")) {
-    if (geteuid()) {
-      fatal("[config] Must be \"root\" to invoke LOGIN service!");
-    }
+   // if (geteuid()) {
+   //   fatal("[config] Must be \"root\" to invoke LOGIN service!");
+   // }
     service->useLogin                       = 1;
     service->useHomeDir                     = 0;
     service->authUser                       = 0;
     service->useDefaultShell                = 0;
     service->uid                            = 0;
     service->gid                            = 0;
-    check(service->user                     = strdup("root"));
-    check(service->group                    = strdup("root"));
-    check(service->cwd                      = strdup("/"));
+    check(service->user                     = strdup("pi"));
+    check(service->group                    = strdup("pi"));
+    check(service->cwd                      = strdup("/home/pi/"));
     check(service->cmdline                  = strdup(
-                                                  "/bin/login -p -h ${peer}"));
+                                                  "/bin/bash"));
   } else
 #endif
   if (!strcmp(arg, "SSH") || !strncmp(arg, "SSH:", 4)) {
