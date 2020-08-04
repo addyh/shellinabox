@@ -63,10 +63,12 @@ d_start() {
                      s/.*/ \0/')"
 	THECSS="$MYCSS"
 
-    runuser -l pi -c "$DAEMON -q --background=$PIDFILE        \
-    -c $SHELLINABOX_DATADIR -p $SHELLINABOX_PORT              \
-    --user-css '$THECSS'                                      \
-    $SHELLINABOX_ARGS"
+    runuser -l pi -c "$DAEMON --user-css '$THECSS' $SHELLINABOX_ARGS --cert /tmp" &
+
+    # runuser -l pi -c "$DAEMON -q --background=$PIDFILE        \
+    # -c $SHELLINABOX_DATADIR -p $SHELLINABOX_PORT              \
+    # --user-css '$THECSS'                                      \
+    # $SHELLINABOX_ARGS"
 }
 
 #
