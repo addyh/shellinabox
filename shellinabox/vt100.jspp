@@ -104,7 +104,7 @@ document.head.appendChild(script);
 
 var meta = document.createElement("meta");
 meta.name = 'viewport';
-meta.content = 'user-scalable=no;user-scalable=0;';
+meta.content = 'user-scalable=no, user-scalable=0';
 document.head.appendChild(meta);
 
 function VT100(container) {
